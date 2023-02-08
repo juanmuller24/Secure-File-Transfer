@@ -1,18 +1,28 @@
 import socket
 
-# create a socket object
-clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+HEADER = 64
+PORT = 5059
+FORMAT = 'utf-8'
+DISCONNECT_MESSAGE = "!DISCONNECT"
+SERVER = socket. gethostbyname(socket.gethostname())
+ADDR = (SERVER, PORT)
 
-# get local machine name
-host = socket.gethostname()
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
 
-port = 9999
+def send(msg):
+    message = msg.encode(FORMAT)
+    msg_length = len(message)
+    send_length = str(msg_length).encode(FORMAT)
+    send_length += b' ' * (HEADER - len(send_length))
+    client.send(send_length)
+    client.send(message)
+    print(client.recv(2048).decode(FORMAT))
 
-# connection to hostname on the port.
-clientsocket.connect((host, port))
+send("Hello World!")
+input('hello')
+send("Hello Everyone!")
+input('hello')
+send("Hello Tim!")
 
-# send a thank you message to the client.
-msg = clientsocket.recv(1024)
-print(msg.decode('ascii'))
-
-clientsocket.close()
+send(DISCONNECT_MESSAGE)
