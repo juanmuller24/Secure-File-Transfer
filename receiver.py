@@ -1,44 +1,36 @@
 import socket
-import threading
-
-HEADER = 64
-PORT = 5059
-SERVER = socket.gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
-FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "!DISCONNECT"
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
 
 
-def handle_client(conn, addr):
-    print(f"[NEW CONNECTION] {addr} connected.")
+def start_server():
+    # Create a TCP/IP socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    connected = True
-    while connected:
-        msg_length = conn.recv(HEADER).decode(FORMAT)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(FORMAT)
-            if msg == DISCONNECT_MESSAGE:
-                connected = False
+    # Bind the socket to a specific address and port
+    server_address = (socket.gethostbyname(socket.gethostname()), 12346)
+    server_socket.bind(server_address)
 
-            print(f"[{addr}] {msg}")
-            conn.send("Msg received".encode(FORMAT))
+    # Listen for incoming connections
+    server_socket.listen(1)
+    print('Server listening on {}:{}'.format(*server_address))
 
-    conn.close()
-
-
-def start():
-    server.listen()
-    print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-        print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+        # Wait for a connection
+        print('Waiting for a connection...')
+        client_socket, client_address = server_socket.accept()
+        print('Accepted connection from {}:{}'.format(*client_address))
+
+        # Receive the data in small chunks and retransmit it
+        data = client_socket.recv(1024)
+        print('Received: {!r}'.format(data))
+        if data:
+            message = b'Hey Juan'
+            client_socket.sendall(message)
+            print('Sent: {!r}'.format(message))
+
+        # Clean up the connection
+        client_socket.close()
+        print('Connection closed')
 
 
-print("[STARTING] server is starting...")
-start()
+if __name__ == '__main__':
+    start_server()

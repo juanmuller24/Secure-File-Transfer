@@ -1,28 +1,29 @@
 import socket
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305, AESGCM, AESOCB3, AESSIV, AESCCM
 
-HEADER = 64
-PORT = 5059
-FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "!DISCONNECT"
-SERVER = socket. gethostbyname(socket.gethostname())
-ADDR = (SERVER, PORT)
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
+def start_client():
+    # Create a TCP/IP socket
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-def send(msg):
-    message = msg.encode(FORMAT)
-    msg_length = len(message)
-    send_length = str(msg_length).encode(FORMAT)
-    send_length += b' ' * (HEADER - len(send_length))
-    client.send(send_length)
-    client.send(message)
-    print(client.recv(2048).decode(FORMAT))
+    # Connect the socket to the server's address and port
+    server_address = (socket.gethostbyname(socket.gethostname()), 12346)
+    client_socket.connect(server_address)
+    print('Connected to {}:{}'.format(*server_address))
 
-send("Hello World!")
-input('hello')
-send("Hello Everyone!")
-input('hello')
-send("Hello Tim!")
+    # Send the data
+    message = b'Hello, server!'
+    client_socket.sendall(message)
+    print('Sent: {!r}'.format(message))
 
-send(DISCONNECT_MESSAGE)
+    # Receive the response
+    data = client_socket.recv(1024)
+    print('Received: {!r}'.format(data))
+
+    # Clean up the connection
+    client_socket.close()
+    print('Connection closed')
+
+
+if __name__ == '__main__':
+    start_client()
