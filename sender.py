@@ -11,14 +11,16 @@ def start_client():
     client_socket.connect(server_address)
     print('Connected to {}:{}'.format(*server_address))
 
-    # Send the data
-    message = b'Hello, server!'
-    client_socket.sendall(message)
-    print('Sent: {!r}'.format(message))
+    with open('test_file_1.txt', 'rb') as f:
+        data = f.read(1024)
+        while data:
+            # Send the data
+            client_socket.sendall(data)
+            data = f.read(1024)
 
-    # Receive the response
-    data = client_socket.recv(1024)
-    print('Received: {!r}'.format(data))
+        # Receive the response
+        # data = client_socket.recv(1024)
+        # print('Received: {!r}'.format(data))
 
     # Clean up the connection
     client_socket.close()
@@ -26,4 +28,10 @@ def start_client():
 
 
 if __name__ == '__main__':
+    print('(1) ChaCha20Poly1305')
+    print('(1) ChaCha20Poly1305')
+    print('(1) ChaCha20Poly1305')
+    print('(1) ChaCha20Poly1305')
+    print('(1) ChaCha20Poly1305')
+
     start_client()
