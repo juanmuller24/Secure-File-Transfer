@@ -2,7 +2,8 @@ import socket
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305, AESGCM, AESOCB3, AESSIV, AESCCM
 
 
-def start_client():
+def start_client(mode):
+
     # Create a TCP/IP socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -29,9 +30,10 @@ def start_client():
 
 if __name__ == '__main__':
     print('(1) ChaCha20Poly1305')
-    print('(1) ChaCha20Poly1305')
-    print('(1) ChaCha20Poly1305')
-    print('(1) ChaCha20Poly1305')
-    print('(1) ChaCha20Poly1305')
+    print('(2) AESGCM')
+    print('(3) AESOCB3')
+    print('(4) AESSIV')
+    print('(5) AESCCM')
+    mode = int(input('Which Mode of encryption? (Enter Number)  '))
 
-    start_client()
+    start_client(mode=mode)
