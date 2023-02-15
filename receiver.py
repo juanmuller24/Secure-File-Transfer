@@ -1,5 +1,11 @@
 import socket
 
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305, AESGCM, AESOCB3, AESSIV, AESCCM
+
+val = 0
+nonce = val.to_bytes(12, "big")
+aad = b"CS645/745 Modern Cryptography"
+
 
 def start_server():
     # Create a TCP/IP socket
@@ -18,21 +24,34 @@ def start_server():
     client_socket, client_address = server_socket.accept()
     print('Accepted connection from {}:{}'.format(*client_address))
 
+    key = client_socket.recv(1024)
+    print(f'the key on server side ISSS: {key}')
+
     with open('received_file.txt', 'wb') as f:
         while True:
             # Receive the data in small chunks and retransmit it
+
             data = client_socket.recv(1024)
-            f.write(data)
 
             if not data:
                 break
-
             f.write(data)
+
             # message = b'Hey Juan'
             # client_socket.sendall(message)
             # print('Sent: {!r}'.format(message))
 
-# Clean up the connection
+    # Clean up the connection
+    with open('received_file.txt', 'rb') as file:
+        data = file.read()
+
+    chacha = ChaCha20Poly1305(key)
+
+    print(f'data: {data}')
+
+    ct = chacha.decrypt(nonce, data, aad)
+    with open('decrypted_file.txt', 'wb') as decrypted_file:
+        decrypted_file.write(ct)
     client_socket.close()
     print('Connection closed')
 
