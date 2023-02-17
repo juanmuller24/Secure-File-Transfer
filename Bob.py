@@ -32,7 +32,7 @@ def start_server():
     print(f'the key is : {key}')
 
     bits = client_socket.recv(1024)
-    bits_len = int.from_bytes(bits, byteorder="big")
+    bits_len = int.from_bytes(bits, "big")
     print(f'the length of received: {bits}')
     print(f'the length of the bit: {bits_len}')
 
@@ -57,7 +57,7 @@ def start_server():
                 decrypted_file.write(ct)
         elif int(encryption_type) == 4:
             aessiv = AESSIV(key)
-            ct = aessiv.decrypt(data, aad)
+            ct = aessiv.decrypt(data, [b"CS645/745 Modern Cryptography"])
             with open('decrypted_file.txt', 'wb') as decrypted_file:
                 decrypted_file.write(ct)
         elif int(encryption_type) == 5:

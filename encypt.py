@@ -31,7 +31,7 @@ class Encrypt:
         return aesocb, key
 
     def aessiv(self):
-        key = AESSIV.generate_key(bit_length=512)  # AES256 requires 512-bit keys for SIV
+        key = AESSIV.generate_key(bit_length=256)  # AES256 requires 512-bit keys for SIV
         print(f'THE KEY ISSSSSS: {key}')
         aessiv = AESSIV(key)
         return aessiv, key

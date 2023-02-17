@@ -22,29 +22,40 @@ def start_client(mode):
     # sending the type of enc
     encryption_type = mode.to_bytes()
     client_socket.send(encryption_type)
+    time.sleep(1)
 
     # to encrypt data
     if mode == 1:
         encmode, key = enc.chacha()
+        # sending key
         client_socket.send(key)
+        time.sleep(1)
 
     elif mode == 2:
         encmode, key = enc.aesgcm()
+        # sending key
         client_socket.send(key)
+        time.sleep(1)
 
     elif mode == 3:
         encmode, key = enc.aes0cb3()
+        # sending key
         client_socket.send(key)
+        time.sleep(1)
 
     elif mode == 4:
         encmode, key = enc.aessiv()
+        # sending key
         client_socket.send(key)
+        time.sleep(1)
 
     elif mode == 5:
         encmode, key = enc.AESCCM()
+        # sending key
         client_socket.send(key)
+        time.sleep(1)
 
-    with open('test_file_1.txt', 'rb') as f:
+    with open('test_file_2.txt', 'rb') as f:
         data = f.read()
 
         # while data:
@@ -54,15 +65,24 @@ def start_client(mode):
             bit_length = len(encrypted_data)
             bits = bit_length.to_bytes(12, 'big')
             print(f'the length of the encrypted data: {bit_length}')
-            print(f'the length of in bytes: {bits}')
+            print(f'the length in bytes: {bits}')
+            # sending data
             client_socket.send(bits)
-            time.sleep(2)
+            time.sleep(1)
+            # sending data
             client_socket.sendall(encrypted_data)
 
         else:
-            encdata = encmode.encrypt(data, [b"CS645/745 Modern Cryptography"])
-            client_socket.sendall(encdata)
-            client_socket.send(key)
+            encrypted_data = encmode.encrypt(data, [b"CS645/745 Modern Cryptography"])
+            bit_length = len(encrypted_data)
+            bits = bit_length.to_bytes(12, 'big')
+            print(f'the length of the encrypted data: {bit_length}')
+            print(f'the length in bytes: {bits}')
+            # sending data
+            client_socket.send(bits)
+            time.sleep(1)
+            # sending data
+            client_socket.sendall(encrypted_data)
 
         # Send the data
 
